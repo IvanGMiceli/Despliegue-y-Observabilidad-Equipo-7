@@ -5,12 +5,12 @@
 | Componente | Plataforma | URL |
 | --- | --- | --- |
 | Frontend | Netlify | https://COMPLETAR.netlify.app |
-| Backend (API) | Render | https://COMPLETAR.onrender.com |
-| Health check | Render | https://COMPLETAR.onrender.com/health |
-| Endpoint de ejemplo | Render | https://COMPLETAR.onrender.com/usuarios/1 |
-| Documentación de la API | Render | https://COMPLETAR.onrender.com/docs |
-| Error de prueba (Sentry) | Render | https://COMPLETAR.onrender.com/error-prueba |
-| Repositorio | GitHub | https://github.com/COMPLETAR |
+| Backend (API) | Render | https://gds-backend-d3la.onrender.com |
+| Health check | Render | https://gds-backend-d3la.onrender.com/health |
+| Endpoint de ejemplo | Render | https://gds-backend-d3la.onrender.com/usuarios/1 |
+| Documentación de la API | Render | https://gds-backend-d3la.onrender.com/docs |
+| Error de prueba (Sentry) | Render | https://gds-backend-d3la.onrender.com/error-prueba |
+| Repositorio | GitHub | https://github.com/IvanGMiceli/Despliegue-y-Observabilidad-Equipo-7 |
 
 ## Credenciales de prueba
 
