@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- Página principal estática que Nginx entrega al navegador. -->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Demostración de Docker, FastAPI y MySQL">
+    <title>Bienvenida Docker</title>
+    <!-- Estilos visuales definidos en style.css. -->
+    <link rel="stylesheet" href="/style.css">
+    <!-- config.js define la URL de la API (local: /api; Netlify: URL de Render). -->
+    <script src="/config.js" defer></script>
+    <!-- defer espera a que el HTML esté analizado antes de ejecutar app.js. -->
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="tarjeta">
+      <p class="etiqueta">Aplicación Full-Stack con Docker</p>
+      <!-- app.js reemplaza este texto con el nombre que devuelve FastAPI. -->
+      <h1 id="mensaje">Cargando bienvenida…</h1>
+      <!-- app.js muestra aquí el estado de carga o un error. -->
+      <p id="estado" role="status">Consultando el usuario en MySQL.</p>
+      <!-- El botón hace que app.js vuelva a consultar el endpoint. -->
+      <div class="acciones">
+        <button id="actualizar" type="button">Actualizar mensaje</button>
+        <!-- Actividad 7: llama a un endpoint que falla a propósito para verlo en Sentry. -->
+        <button id="provocar-error" type="button" class="secundario">Provocar error</button>
+      </div>
+    </main>
+  </body>
+</html>
+

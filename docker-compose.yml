@@ -1,0 +1,78 @@
+# Archivo central de Docker Compose: define y conecta los servicios de la aplicación.
+# Se ejecuta desde esta carpeta con: docker compose up --build
+services:
+  mysql:
+    # Imagen oficial de MySQL; este proyecto no necesita un Dockerfile para la base.
+    image: mysql:8.0
+    # Reinicia el servicio ante fallos, salvo que se haya detenido manualmente.
+    restart: unless-stopped
+    environment:
+      # Valores iniciales para root, la base y el usuario que usa FastAPI.
+      # Compose los lee desde .env; el valor tras :- se usa si no existe esa variable.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-app_db}
+      MYSQL_USER: ${MYSQL_USER:-app_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-app123}
+    volumes:
+      # Los archivos reales de MySQL quedan fuera del contenedor y sobreviven a su recreación.
+      - mysql_data:/var/lib/mysql
+      # MySQL ejecuta este script al inicializar un volumen vacío, no en cada arranque.
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      # Solo marca MySQL saludable cuando responde a mysqladmin ping.
+      # $$ deja que la variable la expanda el shell dentro del contenedor, no Compose.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    # La red común permite que los servicios se encuentren por sus nombres.
+    networks:
+      - app_network
+
+  backend:
+    # Construye la imagen con backend/Dockerfile y usa backend como contexto.
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      # 'mysql' es el nombre DNS interno del servicio, no localhost.
+      # 3306 es el puerto interno de MySQL dentro de la red privada de Compose.
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-app_user}:${MYSQL_PASSWORD:-app123}@mysql:3306/${MYSQL_DATABASE:-app_db}
+      # Actividad 7: Sentry es opcional en local; si SENTRY_DSN está vacío, no se envía nada.
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-local}
+    depends_on:
+      mysql:
+        # FastAPI espera hasta que el healthcheck de MySQL confirme disponibilidad.
+        condition: service_healthy
+    ports:
+      # Puerto del equipo anfitrión : puerto interno donde escucha Uvicorn.
+      - "8000:8000"
+    networks:
+      - app_network
+
+  frontend:
+    # Construye Nginx con frontend/public y frontend/nginx.conf.
+    build:
+      context: ./frontend
+    depends_on:
+      # Ordena iniciar backend primero, pero no espera un healthcheck del backend.
+      - backend
+    ports:
+      # El navegador usa localhost:3000; dentro del contenedor Nginx escucha en 80.
+      - "3000:80"
+    networks:
+      - app_network
+
+# Volumen separado del contenedor. 'docker compose down' lo conserva;
+# 'docker compose down -v' lo elimina junto con la base persistida.
+volumes:
+  mysql_data:
+
+# Red bridge privada donde los servicios pueden conectarse usando mysql y backend.
+networks:
+  app_network:
+    name: docker_fullstack_network
+    driver: bridge
+

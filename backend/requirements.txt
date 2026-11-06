@@ -1,0 +1,10 @@
+# Paquetes directos del backend instalados durante la construcción de la imagen.
+# Las versiones fijadas ayudan a que distintas instalaciones usen las mismas versiones.
+
+fastapi==0.115.12          # Define la API HTTP y sus endpoints.
+uvicorn[standard]==0.34.2  # Servidor ASGI que ejecuta FastAPI.
+SQLAlchemy==2.0.40         # Gestiona conexiones y consultas SQL.
+PyMySQL==1.1.1             # Driver que conecta SQLAlchemy con MySQL.
+pydantic==2.11.3           # Validación y representación de datos para FastAPI.
+cryptography               # Soporte que PyMySQL usa para autenticación moderna de MySQL.
+sentry-sdk[fastapi]==2.27.0  # Actividad 7: envía errores y trazas a Sentry.

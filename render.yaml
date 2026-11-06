@@ -1,0 +1,30 @@
+# Blueprint de Render (Actividad 7): despliega el backend FastAPI como Web Service gratuito.
+# Render lo lee desde la raíz del repo (New > Blueprint) y crea el servicio con esta configuración.
+services:
+  - type: web
+    name: gds-backend
+    # Construye la imagen con el MISMO Dockerfile de la Actividad 2.
+    runtime: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    # Plan gratuito: se "duerme" tras ~15 min sin tráfico y tarda ~1 min en despertar.
+    plan: free
+    # Despliegue continuo: cada push a main genera un build y un deploy nuevos.
+    branch: main
+    autoDeploy: true
+    # Render considera sano el deploy recién cuando este endpoint responde 200.
+    healthCheckPath: /health
+    envVars:
+      # sync: false = Render pide el valor al crear el servicio; no queda escrito en el repo.
+      - key: DATABASE_URL
+        sync: false          # mysql+pymysql://USUARIO:CLAVE@HOST:PUERTO/BASE (MySQL en Aiven)
+      - key: DB_SSL
+        value: "true"        # Aiven exige conexión cifrada.
+      - key: DB_SSL_CA
+        sync: false          # Opcional: contenido del ca.pem de Aiven para verificar el servidor.
+      - key: SENTRY_DSN
+        sync: false          # DSN del proyecto en Sentry.
+      - key: SENTRY_ENVIRONMENT
+        value: production
+      - key: CORS_ORIGINS
+        sync: false          # URL pública del frontend, p. ej. https://mi-sitio.netlify.app

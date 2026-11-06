@@ -1,0 +1,14 @@
+# Configuración de Netlify (Actividad 7): publica el frontend estático.
+[build]
+  # Carpeta con index.html, app.js, style.css y config.js (la misma que copia Nginx).
+  publish = "frontend/public"
+  # No hay compilación: solo se reescribe config.js con la URL pública del backend.
+  # API_BASE_URL se carga en Netlify > Site configuration > Environment variables.
+  # Si falta, el deploy falla a propósito para no publicar una web que no anda.
+  command = 'test -n "$API_BASE_URL" && printf "window.APP_CONFIG = { apiBaseUrl: \"%s\" };\n" "$API_BASE_URL" > frontend/public/config.js'
+
+# config.js cambia con cada deploy: se pide al servidor siempre, sin usar la caché.
+[[headers]]
+  for = "/config.js"
+  [headers.values]
+    Cache-Control = "no-cache"

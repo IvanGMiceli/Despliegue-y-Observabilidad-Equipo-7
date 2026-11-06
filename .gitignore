@@ -1,0 +1,12 @@
+# No publicar credenciales locales; compartir .env.example como plantilla.
+.env
+
+# Archivos temporales de Python.
+__pycache__/
+*.py[cod]
+.venv/
+
+# Preferencias locales de editores que no se necesitan para ejecutar el proyecto.
+.idea/
+.vscode/
+
